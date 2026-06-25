@@ -32,25 +32,20 @@ st.set_page_config(
 )
 
 # --- 1. User Configuration ---
-# Credentials and cookie secret are loaded from .streamlit/secrets.toml locally
-# and from the Streamlit Cloud secrets manager when deployed.
 
 credentials = {
     "usernames": {
-        username: {
-            "name": data["name"],
-            "password": data["password"],
+        "admin": {
+            "name": "Barms Global",
+            "password": "$2b$12$xm5pZbFF5q2ETUvIH0i4XugBiWFG6F7LdVSudGhdk4lv7UdmyavT6",
         }
-        for username, data in st.secrets["credentials"]["usernames"].items()
     }
 }
 
 # --- 2. Create the Authenticator ---
+# Pass the values directly without the named labels (credentials=, etc.)
 authenticator = stauth.Authenticate(
-    credentials,
-    "barms_global_auth",
-    st.secrets["auth"]["cookie_secret"],
-    30,
+    credentials, "construction_financials_auth", "some_random_secret_string", 30
 )
 
 # --- 3. Render the Login UI ---
@@ -171,7 +166,8 @@ def render_qs_form(project_id: int, project_name: str) -> None:
             build_stage = st.selectbox("Build Stage", BUILD_STAGES)
             category = st.selectbox("Category", CATEGORIES)
             amount = st.number_input(
-                "Amount (₦)", min_value=0.0, step=1000.0, format="%.2f"
+                "Amount (₦)", min_value=0.0, step=1000.0, format="%.2f",
+                value=None, placeholder="Enter amount..."
             )
 
         with col2:
@@ -194,7 +190,7 @@ def render_qs_form(project_id: int, project_name: str) -> None:
     if submitted:
         # Validation
         errors = []
-        if amount <= 0:
+        if amount is None or amount <= 0:
             errors.append("Amount must be greater than 0.")
         if not description.strip():
             errors.append("Description is required.")
@@ -205,8 +201,8 @@ def render_qs_form(project_id: int, project_name: str) -> None:
             return
 
         is_funding = t_type == "Credit (Funding)"
-        credit = amount if is_funding else 0.0
-        debit = amount if not is_funding else 0.0
+        credit = (amount or 0.0) if is_funding else 0.0
+        debit = (amount or 0.0) if not is_funding else 0.0
 
         try:
             ok = insert_transaction(
@@ -461,14 +457,34 @@ def render_manage_records(project_id: int, project_name: str) -> None:
     )
 
     if st.button("Delete Transaction", type="primary"):
-        target_id = options[selected_label]
+        st.session_state["pending_delete_id"] = options[selected_label]
+        st.session_state["pending_delete_label"] = selected_label
 
-        success = delete_transaction(engine, target_id)
-        if success:
-            st.success(f"Transaction ID {target_id} has been deleted. Refreshing...")
-            st.rerun()  # Immediately refreshes the UI to show the updated ledger
-        else:
-            st.error("Failed to delete the transaction. Check the database connection.")
+    if "pending_delete_id" in st.session_state:
+        target_id = st.session_state["pending_delete_id"]
+        target_label = st.session_state["pending_delete_label"]
+
+        st.warning(f"Are you sure you want to delete this transaction?")
+        st.caption(f"**{target_label}**")
+
+        col_yes, col_no, _ = st.columns([1, 1, 4])
+
+        with col_yes:
+            if st.button("Yes, delete", type="primary"):
+                success = delete_transaction(engine, target_id)
+                del st.session_state["pending_delete_id"]
+                del st.session_state["pending_delete_label"]
+                if success:
+                    st.success(f"Transaction ID {target_id} deleted successfully.")
+                    st.rerun()
+                else:
+                    st.error("Failed to delete the transaction. Check the database connection.")
+
+        with col_no:
+            if st.button("Cancel"):
+                del st.session_state["pending_delete_id"]
+                del st.session_state["pending_delete_label"]
+                st.rerun()
 
 
 # --- Page 4: Data Explorer ---
