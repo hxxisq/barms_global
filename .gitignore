@@ -1,0 +1,33 @@
+# === SECRETS — never commit these ===
+.streamlit/secrets.toml
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# === Virtual environment ===
+venv/
+.venv/
+env/
+
+# === Mac system files ===
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# === VS Code ===
+.vscode/
+
+# === Jupyter (if you ever use it) ===
+.ipynb_checkpoints/
+
+# === Logs & databases ===
+*.log
+*.sqlite
+*.db
