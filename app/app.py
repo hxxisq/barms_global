@@ -85,14 +85,15 @@ BUILD_STAGES = [
     "Roofing",
     "Finishing",
     "External Works",
+    "N/A (Not Applicable)",
 ]
 
 UNITS = [
     "cbq1",
     "cbq2",
-    "cbq18",
     "cbq19",
     "cbq20",
+    "cbq21",
     "shared",
 ]
 
