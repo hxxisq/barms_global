@@ -1,9 +1,5 @@
 """
-app.py — Construction Financials (Streamlit Frontend)
-
-UI and navigation layer for the application. Features two main views:
-- QS Data Entry: A form for logging daily site expenses and project funding.
-- Executive Dashboard: A high-level overview of financial KPIs, expense charts, and the transaction ledger.
+app.py — Barms Global (Streamlit Frontend)
 
 Database operations are strictly decoupled and handled in `data_access.py`.
 """
@@ -26,7 +22,7 @@ from data_access import (
 # --- App config ---
 
 st.set_page_config(
-    page_title="Construction Financials",
+    page_title="Barms Global Construction Financials",
     # page_icon="🏗️",
     layout="wide",
 )
