@@ -2,6 +2,8 @@
 
 A secure, multi-page financial management system built for an active **military barracks construction project** in Nigeria. Designed to replace manual tracking with a real-time, cloud-hosted platform that gives project leadership full visibility into expenditure across units, build stages, and cost categories.
 
+![Executive Dashboard](assets/dashboard.png)
+
 > **Status: Live and in active production use by a 2-person project team.**
 
 ---
@@ -47,6 +49,13 @@ barms_global/
 ├── app/
 │   ├── app.py            # Streamlit UI — all page rendering and navigation
 │   └── data_access.py    # Database layer — strictly decoupled from UI
+├── assets/
+│   ├── dashboard.png 
+│   ├── data entry.png
+│   ├── data explorer.png 
+│   ├── data explorer 2.png 
+│   ├── data explorer 3.png 
+│   └── manage records.png 
 ├── sql/
 │   └── schema.sql        # PostgreSQL schema
 ├── requirements.txt
