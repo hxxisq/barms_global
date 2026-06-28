@@ -429,7 +429,7 @@ def render_manage_records(project_id: int, project_name: str) -> None:
         return
 
     # Display the recent transactions so the user can identify the mistake
-    st.subheader("Recent Transactions (Last 30 Days)")
+    st.subheader("Recent Transactions")
     display_df = df.drop(columns=["project_id", "is_funding"], errors="ignore")
     st.dataframe(display_df, hide_index=True, use_container_width=True)
 
